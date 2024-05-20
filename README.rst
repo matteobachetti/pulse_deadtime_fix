@@ -38,6 +38,8 @@ The following ephemeris from the Jodrell Bank Observatory is used to fold the da
         [29.6384226073, -3.6865813e-10, 9.171123484933526e-21]
     )
 
+.. image:: docs/images/crab_deadtime_corr.jpg
+
 
 License
 -------
