@@ -7,6 +7,8 @@ Usage
 Here is a simple example of how to correct the dead time distortion of a pulse profile.
 The data in the example are from the Crab pulsar, observed with NuSTAR (ObsID 10302001004).
 
+Note: **This technique will not work if the FITS event list does not have a PRIOR column indicating the livetime since the last event**.
+
 The following ephemeris from the Jodrell Bank Observatory is used to fold the data:
 
 .. code-block::
