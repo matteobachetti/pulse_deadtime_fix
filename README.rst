@@ -1,6 +1,38 @@
 Fix dead time distortion of pulse profiles
 ------------------------------------------
 
+Usage
+-----
+
+Here is a simple example of how to correct the dead time distortion of a pulse profile.
+The data in the example are from the Crab pulsar, observed with NuSTAR (ObsID 10302001004).
+
+The following ephemeris from the Jodrell Bank Observatory is used to fold the data:
+
+.. code-block::
+    PSRJ            J0534+2200
+    RAJ             05:34:31.973
+    DECJ            +22:00:52.06
+    PEPOCH           58011.000000379725
+    F0               29.6384226073
+    F1               -3.6865813e-10
+    F2               9.171123484933526e-21
+    TZRMJD           58012.000000349
+    TZRSITE          0
+    TZRFRQ          0
+    EPHEM           DE200
+    UNITS           TDB
+    CLK             TT(TAI)
+
+.. code-block::python
+
+    from pulse_deadtime_fix.core import fold_and_correct_profile
+    from stingray import EventList
+
+    ev = EventList.read("nu10302001004A01_bary.evt", additional_columns=["prior"], fmt="hea")
+    phas, prof, prof_corr = fold_and_correct_profile(ev.time, ev.prior, (58011.000000379725 - ev.mjdref) * 86400, [29.6384226073, -3.6865813e-10, 9.171123484933526e-21])
+
+
 License
 -------
 
