@@ -10,6 +10,7 @@ The data in the example are from the Crab pulsar, observed with NuSTAR (ObsID 10
 The following ephemeris from the Jodrell Bank Observatory is used to fold the data:
 
 .. code-block::
+
     PSRJ            J0534+2200
     RAJ             05:34:31.973
     DECJ            +22:00:52.06
