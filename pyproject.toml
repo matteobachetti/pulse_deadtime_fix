@@ -14,7 +14,7 @@ license = { file = "licenses/LICENSE.rst", content-type = "text/plain" }
 authors = [
   { name = "Matteo B", email = "matteo@matteobachetti.it" },
 ]
-dependencies = ["numpy", "astropy", "stingray"]
+dependencies = ["numpy", "astropy", "stingray", "numba"]
 dynamic = ["version"]
 
 [project.optional-dependencies]
