@@ -1,0 +1,31 @@
+{
+  "template": "https://github.com/OpenAstronomy/packaging-guide",
+  "commit": "e7f59ff1c4a17783223b68ae5e2a03969ba5847d",
+  "checkout": null,
+  "context": {
+    "cookiecutter": {
+      "package_name": "pulse_deadtime_fix",
+      "module_name": "pulse_deadtime_fix",
+      "short_description": "Fix dead time distortion of pulse profiles",
+      "author_name": "Matteo B",
+      "author_email": "matteo@matteobachetti.it",
+      "project_url": "github.com/matteobachetti/pulse_deadtime_fix",
+      "license": "BSD 3-Clause",
+      "minimum_python_version": "3.9",
+      "use_compiled_extensions": "n",
+      "enable_dynamic_dev_versions": "y",
+      "include_example_code": "n",
+      "include_cruft_update_github_workflow": "y",
+      "_sphinx_theme": "alabaster",
+      "_parent_project": "",
+      "_install_requires": "",
+      "_copy_without_render": [
+        "docs/_templates",
+        "docs/_static",
+        ".github/workflows/sub_package_update.yml"
+      ],
+      "_template": "https://github.com/OpenAstronomy/packaging-guide"
+    }
+  },
+  "directory": null
+}
