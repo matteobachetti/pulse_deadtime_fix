@@ -9,7 +9,7 @@
       "short_description": "Fix dead time distortion of pulse profiles",
       "author_name": "Matteo B",
       "author_email": "matteo@matteobachetti.it",
-      "project_url": "github.com/matteobachetti/pulse_deadtime_fix",
+      "project_url": "https://github.com/matteobachetti/pulse_deadtime_fix",
       "license": "BSD 3-Clause",
       "minimum_python_version": "3.9",
       "use_compiled_extensions": "n",

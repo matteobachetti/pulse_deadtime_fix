@@ -14,9 +14,7 @@ Or, to install the development version
 
 .. code-block::
 
-    git clone https://github.com/matteobachetti/pulse_deadtime_fix
-    cd pulse_deadtime_fix
-    pip install .
+    pip install git+https://github.com/matteobachetti/pulse_deadtime_fix.git
 
 Usage
 -----

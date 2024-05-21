@@ -28,7 +28,7 @@ docs = [
     "sphinx-automodapi",
 ]
 [project.urls]
-repository = "github.com/matteobachetti/pulse_deadtime_fix"
+repository = "https://github.com/matteobachetti/pulse_deadtime_fix"
 
 [tool.setuptools]
 zip-safe = false
