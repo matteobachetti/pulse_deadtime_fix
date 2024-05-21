@@ -3,6 +3,20 @@ Fix dead time distortion of pulse profiles
 
 .. image:: docs/images/simulate_corr.jpg
 
+Installation
+------------
+
+.. code-block::
+
+    pip install pulse_deadtime_fix
+
+Or, to install the development version
+
+.. code-block::
+
+    git clone https://github.com/matteobachetti/pulse_deadtime_fix
+    cd pulse_deadtime_fix
+    pip install .
 
 Usage
 -----
