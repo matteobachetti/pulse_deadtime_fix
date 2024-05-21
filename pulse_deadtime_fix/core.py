@@ -168,31 +168,56 @@ def make_plot(period=0.02, nbin=256):
     def duplicate(prof):
         return np.concatenate((prof, prof))
 
-    profile_corr *= np.mean(profile / profile_corr)
-    plt.plot(
-        allph, duplicate(profile), label="Original", ds="steps-mid", zorder=10, lw=2
-    )
-    plt.plot(allph, duplicate(profile_raw), label="Raw", ds="steps-mid")
+    def normalize_and_duplicate(prof):
+        prof = prof / prof.max()
+        prof -= prof.mean()
+        return duplicate(prof)
+
+    plt.figure(figsize=(10, 5))
     plt.plot(
         allph,
-        duplicate(profile_corr),
+        normalize_and_duplicate(profile) + 0.5,
+        label="Original",
+        ds="steps-mid",
+        zorder=10,
+        lw=2,
+        color="k",
+    )
+
+    plt.plot(
+        allph,
+        normalize_and_duplicate(profile_corr) + 0.5,
         label="Corrected",
         ds="steps-mid",
         lw=2,
+        color="r",
     )
+
     plt.plot(
         allph,
-        duplicate(weights * profile.max()),
-        alpha=0.1,
+        normalize_and_duplicate(profile_raw),
+        label="Raw",
+        ds="steps-mid",
+        color="grey",
+    )
+
+    plt.plot(
+        allph,
+        normalize_and_duplicate(weights),
+        alpha=0.4,
         label="Weights",
         ds="steps-mid",
+        color="b",
     )
-    print(weights.max())
 
+    plt.ylabel("Flux (arbitrary units)")
+    plt.xlabel("Phase")
+    plt.xlim(0, 2)
     plt.legend()
+    plt.grid()
+    plt.tight_layout()
     plt.show()
 
 
 if __name__ == "__main__":
-    make_plot(0.1)
     make_plot(0.01)
