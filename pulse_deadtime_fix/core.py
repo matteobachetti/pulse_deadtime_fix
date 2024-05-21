@@ -1,6 +1,11 @@
 import numpy as np
 import numba as nb
 from stingray.filters import get_deadtime_mask
+from pulse_deadtime_fix.simulate import (
+    simulate_pulsed_events,
+    mask_fraction_of_data,
+    apply_deadtime_and_calculate_prior,
+)
 
 
 @nb.njit()
@@ -68,15 +73,14 @@ def _create_weights(phase_start, phase_end, phase_edges):
         ph_end = ph_end - np.floor(ph_end)
 
         startbin, endbin = np.searchsorted(phase_edges, [ph_start, ph_end])
-        # if endbin == phase_mid.size:
-        #     endbin = 0
+
         if endbin < startbin:
             weights[:endbin] += 1
             weights[startbin:] += 1
         else:
             weights[startbin:endbin] += 1
-    weights = 1 / weights
     weights /= weights.max()
+    weights = 1 / weights
     return weights
 
 
@@ -134,42 +138,23 @@ def fold_and_correct_profile(
     return phase_mid, profile_raw, profile_raw * weights
 
 
-def make_plot(period=0.02):
-    nbin = 256
-    deadtime = 2.5e-3
-    tstart = 0
-    ctrate = 1000
-    tstop = 1000 * nbin / ctrate
-
-    rdet_over_rin = 1 / (1 + deadtime * ctrate)
-
-    nphots = ctrate * (tstop - tstart)
-    pulse_flux_fraction = 0.03
-    phases_main = np.random.normal(0.2, 0.01, int(pulse_flux_fraction / 2 * nphots))
-    phases_sec = np.random.normal(0.8, 0.05, int(pulse_flux_fraction / 2 * nphots))
-    base = np.random.uniform(0, 1, int((1 - pulse_flux_fraction) * nphots))
-    phases = np.concatenate((phases_main, phases_sec, base))
-
-    profile, _ = np.histogram(phases, bins=np.linspace(0, 1, nbin + 1))
-    phases = np.sort(
-        (np.random.randint(tstart / period, tstop / period, phases.size) + phases)
+def make_plot(period=0.02, nbin=256):
+    times = simulate_pulsed_events(
+        period=period,
+        peak_phases=[0.2, 0.8],
+        peak_width=[0.01, 0.05],
+        peak_flux_fraction=[0.015, 0.015],
+        nbin=nbin,
+        min_length=10000,
     )
-    times = phases * period
 
-    mask = get_deadtime_mask(
-        times,
-        deadtime,
-        paralyzable=False,
-        return_all=False,
+    profile, _ = np.histogram((times / period) % 1, bins=np.linspace(0, 1, nbin + 1))
+    times_filt, priors = apply_deadtime_and_calculate_prior(
+        times, 2.5e-3, paralyzable=False
     )
-    times_filt = times[mask]
-    priors = np.zeros_like(times_filt)
-    priors[1:] = np.diff(times_filt) - deadtime
 
-    # Now, eliminate a chunk of data
-    mask = np.ones_like(times_filt, dtype=bool)
-    # mask[np.random.randint(0, mask.size, size=mask.size)] = False
-    # print(times_filt.size, times_filt[mask].size, priors[mask].size)
+    mask = mask_fraction_of_data(times_filt, 0.5)
+
     phase, profile_raw, profile_corr = fold_and_correct_profile(
         times_filt[mask], priors[mask], 0, [1 / period, 0, 0], nbin=nbin
     )

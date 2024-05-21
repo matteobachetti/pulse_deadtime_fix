@@ -1,44 +1,32 @@
 import numpy as np
 import pytest
 
-from pulse_deadtime_fix.core import fold_and_correct_profile, get_deadtime_mask
+from pulse_deadtime_fix.core import fold_and_correct_profile
+from pulse_deadtime_fix.simulate import (
+    simulate_pulsed_events,
+    apply_deadtime_and_calculate_prior,
+    mask_fraction_of_data,
+)
 
 
 @pytest.mark.parametrize("period", [0.1, 0.01])
-def test_consistent_results(period):
+@pytest.mark.parametrize("fraction", [0.7, 0.3])
+def test_consistent_results(period, fraction):
     nbin = 512
-    deadtime = 2.5e-3
-    tstart = 0
-    ctrate = 1000
-    tstop = 1000 * nbin / ctrate
-
-    nphots = ctrate * (tstop - tstart)
-    pulse_flux_fraction = 0.03
-    phases_main = np.random.normal(0.2, 0.01, int(pulse_flux_fraction / 2 * nphots))
-    phases_sec = np.random.normal(0.8, 0.05, int(pulse_flux_fraction / 2 * nphots))
-    base = np.random.uniform(0, 1, int((1 - pulse_flux_fraction) * nphots))
-    phases = np.concatenate((phases_main, phases_sec, base))
-
-    profile, _ = np.histogram(phases, bins=np.linspace(0, 1, nbin + 1))
-    phases = np.sort(
-        (np.random.randint(tstart / period, tstop / period, phases.size) + phases)
+    times = simulate_pulsed_events(
+        period=period,
+        peak_phases=[0.2, 0.8],
+        peak_width=[0.01, 0.05],
+        peak_flux_fraction=[0.015, 0.015],
+        nbin=nbin,
     )
-    times = phases * period
 
-    mask = get_deadtime_mask(
-        times,
-        deadtime,
-        paralyzable=False,
-        return_all=False,
+    profile, _ = np.histogram((times / period) % 1, bins=np.linspace(0, 1, nbin + 1))
+    times_filt, priors = apply_deadtime_and_calculate_prior(
+        times, 2.5e-3, paralyzable=False
     )
-    times_filt = times[mask]
-    priors = np.zeros_like(times_filt)
-    priors[1:] = np.diff(times_filt) - deadtime
-
-    # Now, eliminate a chunk of data
-    mask = np.ones_like(times_filt, dtype=bool)
-
-    phase, profile_raw, profile_corr = fold_and_correct_profile(
+    mask = mask_fraction_of_data(times_filt, fraction)
+    _, _, profile_corr = fold_and_correct_profile(
         times_filt[mask], priors[mask], 0, [1 / period, 0, 0], nbin=nbin
     )
 
