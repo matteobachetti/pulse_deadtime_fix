@@ -1,6 +1,9 @@
 Fix dead time distortion of pulse profiles
 ------------------------------------------
 
+.. image:: docs/images/simulate_corr.jpg
+
+
 Usage
 -----
 
@@ -27,18 +30,23 @@ The following ephemeris from the Jodrell Bank Observatory is used to fold the da
     UNITS           TDB
     CLK             TT(TAI)
 
+
+At this point, it is sufficient to calculate the folded profile as follows:
+
 .. code-block::python
 
     from pulse_deadtime_fix.core import fold_and_correct_profile
     from stingray import EventList
 
     ev = EventList.read("nu10302001004A01_bary.evt", additional_columns=["prior"], fmt="hea")
-    phas, prof, prof_corr = fold_and_correct_profile(
+    phas, prof_raw, prof_corr = fold_and_correct_profile(
         ev.time,
         ev.prior,
         (58011.000000379725 - ev.mjdref) * 86400,
         [29.6384226073, -3.6865813e-10, 9.171123484933526e-21]
     )
+
+And the comparison between the raw and the corrected profile (in arbitrary units) is:
 
 .. image:: docs/images/crab_deadtime_corr.jpg
 
