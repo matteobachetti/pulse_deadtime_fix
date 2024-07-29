@@ -10,7 +10,7 @@ name = "pulse_deadtime_fix"
 description = "Fix dead time distortion of pulse profiles"
 requires-python = ">=3.9"
 readme = { file = "README.rst", content-type = "text/x-rst" }
-license = { file = "licenses/LICENSE.rst", content-type = "text/plain" }
+license = { file = "licenses/LICENSE.rst" }
 authors = [
   { name = "Matteo B", email = "matteo@matteobachetti.it" },
 ]
